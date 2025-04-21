@@ -1,0 +1,21 @@
+appName: hello-deployment
+
+image:
+  repository: nginx
+  tag: latest
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 90Mi
+
+ingress:
+  host: ""
+  path: /
+
+controller:
+  image: registry.k8s.io/ingress-nginx/controller:v1.9.1
+  nodePort:
+    http: 32072
+    https: 31015
+

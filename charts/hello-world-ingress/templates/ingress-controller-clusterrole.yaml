@@ -1,0 +1,43 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # release‑unique name avoids collisions across installs
+  name: {{ .Release.Name }}-ingress-nginx
+  labels:
+    app.kubernetes.io/part-of: ingress-nginx
+rules:
+  # ── core objects the controller watches cluster‑wide ────────────────────────
+  - apiGroups: [""]
+    resources:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+      - secrets
+      - services
+    verbs: ["get","list","watch"]
+
+  # needs to GET individual nodes for publishing external addresses
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get"]
+
+  # endpoint slices (modern K8s service discovery)
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get","list","watch"]
+
+  # ingress objects
+  - apiGroups: ["extensions","networking.k8s.io"]
+    resources: ["ingresses","ingressclasses"]
+    verbs: ["get","list","watch"]
+
+  # update ingress status
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses/status"]
+    verbs: ["update"]
+
+  # ── NEW: read cluster‑scope Lease objects for leader‑election ──────────────
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get","list","watch"]

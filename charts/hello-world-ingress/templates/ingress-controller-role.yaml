@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-ingress-nginx
+  namespace: ingress-nginx
+rules:
+  # watch namespace‑local objects
+  - apiGroups: [""]
+    resources: [configmaps, pods, secrets, namespaces]
+    verbs: ["get","list","watch"]
+
+  # access/update the leader‑election ConfigMap (legacy fallback)
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["ingress-nginx-leader"]
+    verbs: ["get","update"]
+
+  # create the leader‑election ConfigMap if missing
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["create"]
+
+  # ── NEW: full access to the namespace‑scoped Lease for leader‑election ─────
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get","list","watch","create","update"]
