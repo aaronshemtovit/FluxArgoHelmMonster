@@ -1,0 +1,44 @@
+name: Helm‑CI
+on:
+  push:
+    paths: ["charts/**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set chart version
+        id: vars
+        run: |
+          echo "VER=$(date +%Y%m%d%H%M%S)" >> "$GITHUB_OUTPUT"
+
+      - name: Helm lint / test
+        run: |
+          helm lint charts/hello-world-ingress
+          helm template test charts/hello-world-ingress
+
+      - name: Package
+        run: helm package charts/hello-world-ingress \
+              --version ${{ steps.vars.outputs.VER }} \
+              --app-version ${{ steps.vars.outputs.VER }}
+
+      - name: Login & push to OCI registry
+        env:
+          HELM_EXPERIMENTAL_OCI: 1
+        run: |
+          echo "${{ secrets.CR_PAT }}" | \
+            helm registry login ghcr.io \
+              --username ${{ github.repository_owner }} \
+              --password-stdin
+          helm push hello-world-ingress-${{ steps.vars.outputs.VER }}.tgz oci://ghcr.io/${{ github.repository_owner }}
+
+      - name: Upload version
+        uses: actions/upload-artifact@v3
+        with:
+          name: chart-version
+          path: |
+            hello-world-ingress-${{ steps.vars.outputs.VER }}.tgz
+          retention-days: 1

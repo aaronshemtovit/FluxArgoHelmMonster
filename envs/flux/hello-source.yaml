@@ -1,0 +1,25 @@
+# hello-source.yaml  (OCI HelmRepository)
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: hello-oci
+  namespace: flux-system
+spec:
+  type: oci
+  url: oci://ghcr.io/aaronshemtovit
+---
+# hello-helmrelease.yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hello
+  namespace: default
+spec:
+  chart:
+    spec:
+      chart: hello-world-ingress
+      sourceRef:
+        kind: HelmRepository
+        name: hello-oci
+      version: "0.0.0"                   # → workflow bumps this
+  interval: 1m
