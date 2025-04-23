@@ -1,18 +1,18 @@
-# hello-application.yaml  (points to same OCI chart)
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: hello
   namespace: argocd
 spec:
-  destination:
-    namespace: default
-    server: https://kubernetes.default.svc
+  project: default
   source:
+    repoURL: oci://ghcr.io/aaronshemtovit      # OCI registry!
     chart: hello-world-ingress
-    repoURL: oci://ghcr.io/aaronshemtovit
-    targetRevision: "0.0.0"              # → workflow bumps this
+    targetRevision: "0.2.2"                    # same tag as Flux
     helm:
-      releaseName: hello-argo
+      enableOci: true                          # ← Argo flag
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
   syncPolicy:
     automated: {}
