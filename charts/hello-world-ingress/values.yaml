@@ -16,6 +16,6 @@ ingress:
 controller:
   image: registry.k8s.io/ingress-nginx/controller:v1.9.1
   nodePort:
-    http: 32072
+    http: 32073
     https: 31015
 
