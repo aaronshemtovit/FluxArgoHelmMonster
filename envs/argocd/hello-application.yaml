@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: oci://ghcr.io/aaronshemtovit      # OCI registry!
     chart: hello-world-ingress
-    targetRevision: "0.2.2"                    # same tag as Flux
+    targetRevision: "0.2.3"                    # same tag as Flux
     helm:
       enableOci: true                          # ← Argo flag
   destination:

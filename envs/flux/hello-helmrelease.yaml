@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: hello-world-ingress
-      version: "0.2.2"        # ← latest published chart tag
+      version: "0.2.3"        # ← latest published chart tag
       sourceRef:
         kind: HelmRepository
         name: hello-oci
