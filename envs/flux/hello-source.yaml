@@ -1,10 +1,11 @@
-# envs/flux/hello-source.yaml  (HelmRepository)
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: hello-oci
   namespace: flux-system
 spec:
-  type: oci                   # ← tell Flux this is an OCI repo
-  interval: 5m
+  type: oci
   url: oci://ghcr.io/aaronshemtovit
+  interval: 5m
+  secretRef:            # ← add
+    name: ghcr-creds
